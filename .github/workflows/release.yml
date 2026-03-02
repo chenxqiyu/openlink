@@ -1,8 +1,7 @@
 name: NewRelease
 
 on:
-  push:
-    tags: ["v*"]
+  workflow_dispatch: # 修改为手动触发
 
 jobs:
   release:
@@ -10,8 +9,10 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout specific commit
+        uses: actions/checkout@v4
         with:
+          ref: e9449feee315bf4bad4280e2c0f8fcf9755c79d4
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
