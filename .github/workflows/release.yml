@@ -34,6 +34,7 @@ jobs:
           TAG="build-${{ github.run_id }}"
           gh release create "$TAG" --target "${{ github.sha }}" --title "Build ${{ github.run_id }}"
           gh release upload "$TAG" /tmp/extension-dist.zip
+          gh release upload "$TAG" dist/openlink_*.tar.gz dist/openlink_*.zip || true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # - run: gh release upload ${{ github.ref_name }} /tmp/extension-dist.zip
