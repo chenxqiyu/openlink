@@ -29,30 +29,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 2. 创建临时 Release 并上传文件 (替换原来的 gh release upload 步骤)
-      - name: Create Release and Upload Assets
+      - name: Upload to New Release
         run: |
-          # 生成一个唯一的临时 Tag 名称，例如：test-build-123456789
-          TEMP_TAG="test-build-${{ github.run_id }}"
-          
-          echo "🚀 Creating temporary release: $TEMP_TAG"
-          
-          # 先创建 Release (如果不存在)
-          # --target 指定构建的 commit，--title 和 --notes 可选
-          gh release create "$TEMP_TAG" \
-            --target "${{ github.sha }}" \
-            --title "Snapshot Build ${{ github.run_id }}" \
-            --notes "Auto-generated snapshot for commit ${{ github.sha }}" \
-            --clobber || true # 如果已存在则忽略错误（虽然 run_id 唯一通常不会存在）
-
-          echo "📦 Uploading extension zip..."
-          gh release upload "$TEMP_TAG" /tmp/extension-dist.zip --clobber
-
-          echo "📦 Uploading goreleaser binaries (optional)..."
-          # 可选：如果你想把 goreleaser 生成的二进制文件也传上去，取消下面这行的注释
-          # gh release upload "$TEMP_TAG" dist/openlink_* dist/*.tar.gz dist/*.zip --clobber || true
-
-          echo "✅ Success! Check release at: https://github.com/${{ github.repository }}/releases/tag/$TEMP_TAG"
+          TAG="build-${{ github.run_id }}"
+          gh release create "$TAG" --target "${{ github.sha }}" --title "Build ${{ github.run_id }}"
+          gh release upload "$TAG" /tmp/extension-dist.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # - run: gh release upload ${{ github.ref_name }} /tmp/extension-dist.zip
